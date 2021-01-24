@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  image_webifier:
+    container_name: image_webifier
+    build: .
+    volumes:
+      - .:/app
+    command: irb
+    stdin_open: true
+    tty: true
