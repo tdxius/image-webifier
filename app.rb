@@ -1,5 +1,6 @@
 require 'rmagick'
 require 'fileutils'
+require_relative 'lib/resizer'
 
 def file_size(file)
   (File.size(file).to_f / 2 ** 20).round(2)
@@ -19,29 +20,18 @@ Dir.glob("storage/input/**/*").each do |file|
   next if File.directory?(file)
 
   original_image = Magick::Image.read(file).first
+  transformed_image = Resizer.resize(original_image)
+
   out_file = file.gsub('/input/', '/output/')
+  out_directory = out_file.split('/')[0..-2].join('/')
+  FileUtils.mkdir_p(out_directory)
 
-  width = original_image.columns
-  height = original_image.rows
-  if width > 1000 || height > 0
-    transformed_image = original_image.resize_to_fit!(1000, 1000)
-  else
-    transformed_image = original_image
-  end
-
-  FileUtils.mkdir_p(out_file.split('/')[0..-2].join('/'))
   transformed_image.write(out_file) do
     self.quality = 80
   end
-  pp [
-         out_file,
-         transformed_image.columns,
-         transformed_image.rows,
-         file_size(file),
-         file_size(out_file)
-     ]
+  puts out_file
 rescue
-  puts "#{file} is not an image."
+  puts "An error occurred with file #{file}"
 end
 
 puts "Input size: #{directory_size('storage/input')} Mb"
