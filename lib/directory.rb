@@ -11,6 +11,11 @@ class Directory
       end
     end
 
+    def create_for_file(file_path)
+      out_directory = file_path.split('/')[0..-2].join('/')
+      FileUtils.mkdir_p(out_directory)
+    end
+
     private
 
     def file_size(file)

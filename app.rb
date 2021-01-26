@@ -8,14 +8,13 @@ Dir.glob("storage/input/**/*").each do |file|
 
   original_image = Magick::Image.read(file).first
   transformed_image = Resizer.resize(original_image)
-
   out_file = file.gsub('/input/', '/output/')
-  out_directory = out_file.split('/')[0..-2].join('/')
-  FileUtils.mkdir_p(out_directory)
 
+  Directory.create_for_file(out_file)
   transformed_image.write(out_file) do
     self.quality = 80
   end
+
   puts out_file
 rescue
   puts "An error occurred with file #{file}"
