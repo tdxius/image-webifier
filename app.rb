@@ -1,20 +1,7 @@
 require 'rmagick'
 require 'fileutils'
 require_relative 'lib/resizer'
-
-def file_size(file)
-  (File.size(file).to_f / 2 ** 20).round(2)
-end
-
-def directory_size(directory_path)
-  Dir.glob("#{directory_path}/**/*").sum do |file|
-    if File.directory?(file)
-      0
-    else
-      file_size(file).to_f
-    end
-  end
-end
+require_relative 'lib/directory'
 
 Dir.glob("storage/input/**/*").each do |file|
   next if File.directory?(file)
@@ -34,5 +21,5 @@ rescue
   puts "An error occurred with file #{file}"
 end
 
-puts "Input size: #{directory_size('storage/input')} Mb"
-puts "Output size: #{directory_size('storage/output')} Mb"
+puts "Input size: #{Directory.size('storage/input')} Mb"
+puts "Output size: #{Directory.size('storage/output')} Mb"
